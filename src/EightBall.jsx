@@ -1,7 +1,7 @@
-import { useState } from "react";
+import {useState} from "react";
 
 import "./EightBall.css";
-import { choice } from "./eightball";
+import {choice, updateCounter} from "./eightball";
 
 const POSSIBLE_ANSWERS = [
   {msg: "It is certain.", color: "green"},
@@ -38,8 +38,17 @@ const POSSIBLE_ANSWERS = [
  * App --> EightBall
  */
 
-function EightBall({answers=POSSIBLE_ANSWERS}) {
-  const [answer, setAnswer] = useState({"color": "black", "msg": "Think of a Question"})
+function EightBall({answers = POSSIBLE_ANSWERS}) {
+  const [answer, setAnswer] = useState({
+    color: "black",
+    msg: "Think of a Question",
+  });
+
+  const [counter, setCounter] = useState([
+    {label: "Green", counter: 0},
+    {label: "Goldenrod", counter: 0},
+    {label: "Red", counter: 0},
+  ]);
 
   const styles = {
     backgroundColor: answer.color,
@@ -48,14 +57,44 @@ function EightBall({answers=POSSIBLE_ANSWERS}) {
   const randomAnswer = answers[choice(answers.length)];
 
   function handleClick(evt) {
-    setAnswer(randomAnswer)
+    setAnswer(randomAnswer);
+    setCounter(updateCounter(answer.color, counter));
   }
 
+  console.log("answer: ", answer);
+
   return (
-    <div className="EightBall" style={styles} onClick={handleClick}>
-      <div className="EightBall-message">
-        <h2>{answer.msg}</h2>
+    <div className="container">
+      <div className="EightBall" style={styles} onClick={handleClick}>
+        <div className="EightBall-message">
+          <h2>{answer.msg}</h2>
+        </div>
       </div>
+      <div className="EightBall-counter">
+        <ul>
+          {counter.map((c) => (
+            <li>
+              {c.label}: {c.counter}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <button
+        className="EightBall-button"
+        onClick={() => {
+          setAnswer({
+            color: "black",
+            msg: "Think of a Question",
+          });
+          setCounter([
+            {label: "Green", counter: 0},
+            {label: "Goldenrod", counter: 0},
+            {label: "Red", counter: 0},
+          ]);
+        }}
+      >
+        Reset
+      </button>
     </div>
   );
 }
